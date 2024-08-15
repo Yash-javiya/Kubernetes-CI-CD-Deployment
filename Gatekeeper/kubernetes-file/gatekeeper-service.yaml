@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatekeeper-service  # Name of the service
+spec:
+  type: LoadBalancer  # Type of the service (LoadBalancer)
+  selector:
+    app: gatekeeper  # Selects pods with the label 'app: gatekeeper'
+  ports:
+    - protocol: TCP  # Protocol for the port
+      port: 80  # Port number for incoming traffic
+      targetPort: 6000  # Port number on the pods to forward traffic to

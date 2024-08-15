@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatekeeper-deployment  # Name of the deployment
+spec:
+  replicas: 1  # Number of desired replicas
+  strategy:
+    rollingUpdate:
+      maxSurge: 1  # Maximum number of additional pods allowed during a rolling update
+      maxUnavailable: 1  # Maximum number of unavailable pods allowed during a rolling update
+  selector:
+    matchLabels:
+      app: gatekeeper  # Selects pods with the label 'app: gatekeeper'
+  template:
+    metadata:
+      labels:
+        app: gatekeeper  # Labels for the pods in the deployment
+    spec:
+      containers:
+      - name: gatekeeper-app  # Name of the container
+        image: us-central1-docker.pkg.dev/k8s-assignment-5409/gatekeeper-repo/gatekeeper  # Docker image for the container
+        ports:
+        - containerPort: 6000  # Port number exposed by the container
+        env:
+        - name: HOSTNAME
+          value: processor-service  # Environment variable named 'HOSTNAME' with value 'processor-service'
+        - name: DATA
+          value: /yash_PV_dir  # Environment variable named 'DATA' with value '/yash_PV_dir'
+        volumeMounts:
+        - name: common-pv  # Name of the volume mount
+          mountPath: /yash_PV_dir  # Mount path for the volume
+      volumes:
+      - name: common-pv  # Name of the volume
+        persistentVolumeClaim:
+          claimName: common-pvc  # Name of the persistent volume claim
