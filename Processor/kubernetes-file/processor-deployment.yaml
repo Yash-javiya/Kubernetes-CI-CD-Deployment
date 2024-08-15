@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processor-deployment  # Name of the deployment
+spec:
+  replicas: 1  # Number of desired replicas
+  strategy:
+    rollingUpdate:
+      maxSurge: 1  # Maximum number of additional pods allowed during a rolling update
+      maxUnavailable: 1  # Maximum number of unavailable pods allowed during a rolling update
+  selector:
+    matchLabels:
+      app: processor  # Selects pods with the label 'app: processor'
+  template:
+    metadata:
+      labels:
+        app: processor  # Labels for the pods in the deployment
+    spec:
+      containers:
+      - name: processor-app  # Name of the container
+        image: us-central1-docker.pkg.dev/k8s-assignment-5409/processor-repo/processor  # Docker image for the container
+        env:
+        - name: DATA
+          value: /yash_PV_dir  # Environment variable named 'DATA' with value '/yash_PV_dir'
+        volumeMounts:
+        - name: common-pv  # Name of the volume mount
+          mountPath: /yash_PV_dir  # Mount path for the volume
+      volumes:
+      - name: common-pv  # Name of the volume
+        persistentVolumeClaim:
+          claimName: common-pvc  # Name of the persistent volume claim
