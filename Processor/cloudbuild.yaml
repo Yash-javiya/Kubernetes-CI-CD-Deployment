@@ -1,0 +1,19 @@
+# This Cloud Build configuration builds a Docker image, pushes it to a container registry, and deploys it to a GKE cluster.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - '-t'
+      - 'us-central1-docker.pkg.dev/k8s-assignment-5409/processor-repo/processor:$SHORT_SHA'
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - 'us-central1-docker.pkg.dev/k8s-assignment-5409/processor-repo/processor:$SHORT_SHA'
+  - name: gcr.io/cloud-builders/gke-deploy
+    args:
+      - run
+      - '--filename=kubernetes-file'
+      - '--image=us-central1-docker.pkg.dev/k8s-assignment-5409/processor-repo/processor:$SHORT_SHA'
+      - '--location=us-central1'
+      - '--cluster=k8s-assignment-5409-gke'
